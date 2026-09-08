@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sertifika Oluşturucu</title>
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #f4f4f9; padding: 20px; }
+    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
+    input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+    button { background-color: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; }
+    button:hover { background-color: #218838; }
+    .expired { color: #dc3545; font-size: 18px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="card" id="app">
+  <h2>Sertifika Oluştur</h2>
+  <form id="certForm">
+    <input type="text" id="userName" placeholder="Adınız Soyadınız" required>
+    <button type="button" onclick="generateCert()">Sertifikayı Indir</button>
+  </form>
+</div>
+
+<script>
+  const expiryDate = new Date("2026-09-12T19:00:00+03:00");
+  const now = new Date();
+
+  if (now > expiryDate) {
+    document.getElementById("app").innerHTML = "<p class='expired'>Bu sertifika oluşturma bağlantısının süresi 12 Eylül 2026 saat 19:00 itibarıyla dolmuştur.</p>";
+  }
+
+  function generateCert() {
+    const name = document.getElementById("userName").value.trim();
+    if (!name) return alert("Lütfen adınızı girin.");
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.src = "sertifika-sablon.jpg";
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      ctx.font = "bold 60px sans-serif";
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "center";
+      ctx.fillText(name, canvas.width / 2, canvas.height / 2);
+
+      const link = document.createElement("a");
+      link.download = `Sertifika-${name}.jpg`;
+      link.href = canvas.toDataURL("image/jpeg");
+      link.click();
+    };
+  }
+</script>
+
+</body>
+</html>
